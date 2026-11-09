@@ -4,7 +4,7 @@ defmodule Emergencias.AlbergueProceso do
   alias Emergencias.{Almacen, Albergues}
   alias Emergencias.Dominio.Albergue
 
-  def start_link(albergue), do: GenServer.start_link(_MODULE_, albergue, name: Albergues.via(albergue.codigo))
+  def start_link(albergue), do: GenServer.start_link(__MODULE__, albergue, name: Albergues.via(albergue.codigo))
 
   @impl true
   def init(albergue) do
@@ -97,7 +97,7 @@ defmodule Emergencias.Albergues do
 
   @doc "Consulta todos los albergues en paralelo (un Task por proceso)."
   def listar do
-    Registry.select(Emergencias.AlberguesRegistry, [{{:, :"$1", :}, [], [:"$1"]}])
+    Registry.select(Emergencias.AlberguesRegistry, [{{:_, :"$1", :_}, [], [:"$1"]}])
     |> Task.async_stream(&GenServer.call(&1, :consultar))
     |> Enum.map(fn {:ok, a} -> a end)
     |> Enum.sort_by(& &1.codigo)
