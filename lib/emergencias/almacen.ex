@@ -1,7 +1,7 @@
 defmodule Emergencias.Almacen do
   @moduledoc """
-  Persistencia en archivos de texto plano (data/<archivo>.txt), un registro por línea
-  con el formato {clave, registro} escrito con inspect/2. Un único proceso serializa
+  Persistencia en archivos de texto plano (`data/<archivo>.txt`), un registro por línea
+  con el formato `{clave, registro}` escrito con `inspect/2`. Un único proceso serializa
   las escrituras (evita carreras entre servidores) y escribe de forma atómica
   (archivo temporal + rename). Al iniciar recarga todo desde disco.
   """
@@ -10,12 +10,12 @@ defmodule Emergencias.Almacen do
 
   @archivos [:usuarios, :actividad, :zonas, :necesidades, :recursos, :movimientos, :personas, :mensajes, :mascotas, :albergues]
 
-  def start_link(), do: GenServer.start_link(MODULE, nil, name: __MODULE_)
+  def start_link(_), do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
 
-  def put(archivo, clave, registro), do: GenServer.call(_MODULE_, {:put, archivo, clave, registro})
-  def delete(archivo, clave), do: GenServer.call(_MODULE_, {:delete, archivo, clave})
-  def get(archivo, clave), do: GenServer.call(_MODULE_, {:get, archivo, clave})
-  def todos(archivo), do: GenServer.call(_MODULE_, {:todos, archivo})
+  def put(archivo, clave, registro), do: GenServer.call(__MODULE__, {:put, archivo, clave, registro})
+  def delete(archivo, clave), do: GenServer.call(__MODULE__, {:delete, archivo, clave})
+  def get(archivo, clave), do: GenServer.call(__MODULE__, {:get, archivo, clave})
+  def todos(archivo), do: GenServer.call(__MODULE__, {:todos, archivo})
 
   def directorio, do: Application.get_env(:emergencias, :data_dir, "data")
   defp ruta(archivo), do: Path.join(directorio(), "#{archivo}.txt")
